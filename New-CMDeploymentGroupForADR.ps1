@@ -95,8 +95,6 @@ Param(
     [switch]$CreateSinglePackage,
     [Parameter(Mandatory=$false)]
     [switch]$RemoveDate,
-    [Parameter(Mandatory=$false)]
-    [switch]$StripSpaces,
     [parameter(Mandatory=$true)]
     [string]$DPParentFolder,
     [parameter(Mandatory=$false)]
