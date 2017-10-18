@@ -184,7 +184,9 @@ if($CreateSinglePackage){
         }
         Write-Verbose "Creating package folder..."
         if($pscmdlet.ShouldProcess("$DPParentFolder","Create Folder $DPName$i")){
-            New-Item "filesystem::$($DPParentFolder)\$DPName$i" -Type Directory | out-null
+            if(-not (Test-Path "filesystem::$($DPParentFolder)\$DPName$i")){
+                New-Item "filesystem::$($DPParentFolder)\$DPName$i" -Type Directory | out-null
+            }
             $DPName = "$DPName$i"
         }
         Write-Verbose "Creating deployment package..."
@@ -194,7 +196,6 @@ if($CreateSinglePackage){
             if($DPGroupName){
                 Write-Verbose "Adding Deployment Package to Distribution Point group $DPGroupName"
                 (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
-                
             }
         }
     }
@@ -215,7 +216,6 @@ else{
             if(-not $RemoveDate){
                 $DPName = "$DPName $currentDate"
             }
-            Write-Host $DPName
             if((Get-CMSoftwareUpdateDeploymentPackage -Name "$DPName" -Verbose:$false) -ne $null){
                 $cmDP = Get-CMSoftwareUpdateDeploymentPackage -Name "$DPName" -Verbose:$false
                 Write-Verbose "Found Deployment Package with name `"$DPName`""
@@ -225,7 +225,9 @@ else{
             }
             Write-Verbose "Creating package folder..."
             if($pscmdlet.ShouldProcess("$DPParentFolder","Create Folder $DPName")){
-                New-Item "filesystem::$($DPParentFolder)\$DPName" -Type Directory | out-null
+                if(-not (Test-Path "filesystem::$($DPParentFolder)\$DPName")){
+                    New-Item "filesystem::$($DPParentFolder)\$DPName" -Type Directory | out-null
+                }
             }
             Write-Verbose "Creating deployment package..."
             if($pscmdlet.ShouldProcess("$SiteServer","Create Deployment Package $DPName")){
