@@ -221,21 +221,21 @@ else{
                 Write-Verbose "Found Deployment Package with name `"$DPName`""
                 Write-Verbose "Adding ADRs to hash table to point to `"$DPName`""
             }else{
-                Write-Verbose "No existing deployment pacakge... checking folder structure..."
-            }
-            Write-Verbose "Creating package folder..."
-            if($pscmdlet.ShouldProcess("$DPParentFolder","Create Folder $DPName")){
-                if(-not (Test-Path "filesystem::$($DPParentFolder)\$DPName")){
-                    New-Item "filesystem::$($DPParentFolder)\$DPName" -Type Directory | out-null
+                Write-Verbose "No existing deployment package... checking folder structure..."
+                Write-Verbose "Creating package folder..."
+                if($pscmdlet.ShouldProcess("$DPParentFolder","Create Folder $DPName")){
+                    if(-not (Test-Path "filesystem::$($DPParentFolder)\$DPName")){
+                        New-Item "filesystem::$($DPParentFolder)\$DPName" -Type Directory | out-null
+                    }
                 }
-            }
-            Write-Verbose "Creating deployment package..."
-            if($pscmdlet.ShouldProcess("$SiteServer","Create Deployment Package $DPName")){
-                $cmDP = New-CMSoftwareUpdateDeploymentPackage -Name $DPName -Path "$($DPParentFolder)\$DPName"
-                Write-Warning "Cmdlets and WMI don't allow for enabling Binary Differential Replication. This will have to be done manually if you wish."
-                if($DPGroupName){
-                    Write-Verbose "Adding Deployment Package to Distribution Point group $DPGroupName"
-                    (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
+                Write-Verbose "Creating deployment package..."
+                if($pscmdlet.ShouldProcess("$SiteServer","Create Deployment Package $DPName")){
+                    $cmDP = New-CMSoftwareUpdateDeploymentPackage -Name $DPName -Path "$($DPParentFolder)\$DPName"
+                    Write-Warning "Cmdlets and WMI don't allow for enabling Binary Differential Replication. This will have to be done manually if you wish."
+                    if($DPGroupName){
+                        Write-Verbose "Adding Deployment Package to Distribution Point group $DPGroupName"
+                        (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
+                    }
                 }
             }
             $cmDPtoADRHash = @{}
