@@ -60,6 +60,11 @@ switch is used, in which case it will reuse the existing package.
 NOTE: This parameter also ignores the date - this is a custom name for the
 package.
 
+.PARAMETER DPGroupName
+This will allow you to automatically distribute the package to a named 
+distribution point group. If no name is configured then it will not distribute
+the content.
+
 .EXAMPLE
 Create a new deployment package for an ADR named "SCEP Updates" and save the
 content to "\\sccm01.contoso.com\PackageShare\UpdateDeploymentGroups\SCEP Updates 2017.10.17\"
