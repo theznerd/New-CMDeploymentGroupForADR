@@ -195,7 +195,7 @@ if($CreateSinglePackage){
             Write-Warning "Cmdlets and WMI don't allow for enabling Binary Differential Replication. This will have to be done manually if you wish."
             if($DPGroupName){
                 Write-Verbose "Adding Deployment Package to Distribution Point group $DPGroupName"
-                (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
+                (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -ComputerName "$SiteServer" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
             }
         }
     }
@@ -234,7 +234,7 @@ else{
                     Write-Warning "Cmdlets and WMI don't allow for enabling Binary Differential Replication. This will have to be done manually if you wish."
                     if($DPGroupName){
                         Write-Verbose "Adding Deployment Package to Distribution Point group $DPGroupName"
-                        (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
+                        (Get-WmiObject -Namespace "root\sms\site_$SiteCode" -ComputerName "$SiteServer" -Class "SMS_DistributionPointGroup" -Filter "Name='$($DPGroupName)'").AddPackages($cmDP.PackageID) | out-null
                     }
                 }
             }
@@ -251,7 +251,7 @@ else{
 #####################################
 foreach($cmDPtoADR in $cmDPtoADRTable){
     if($pscmdlet.ShouldProcess("$($cmDPtoADR.ADR.Name)", "Setting Deployment Package $($cmDPtoADR.DP.Name)")){
-        [wmi]$AutoDeployment = (Get-WmiObject -Class SMS_AutoDeployment -Namespace root/SMS/site_$($SiteCode) -ComputerName $SiteServer | Where-Object -FilterScript {$_.Name -eq $($cmDPtoADR.ADR.Name)}).__PATH
+        [wmi]$AutoDeployment = (Get-WmiObject -Class SMS_AutoDeployment -Namespace root/SMS/site_$($SiteCode) -ComputerName "$SiteServer" | Where-Object -FilterScript {$_.Name -eq $($cmDPtoADR.ADR.Name)}).__PATH
         [xml]$ContentTemplateXML = $AutoDeployment.ContentTemplate
         $ContentTemplateXML.ContentActionXML.PackageId = $($cmDPtoADR.DP.PackageID)
         $AutoDeployment.ContentTemplate = $ContentTemplateXML.OuterXML
